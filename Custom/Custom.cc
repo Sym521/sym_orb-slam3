@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::MONOCULAR, true);
 
     // Open the default camera (usually the built-in camera)
-    cv::VideoCapture cap("/dev/video0");
+    cv::VideoCapture cap("/dev/video5");
     if (!cap.isOpened())
     {
         std::cerr << "Failed to open camera!" << std::endl;
