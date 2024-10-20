@@ -28,6 +28,7 @@
 #include<thread>
 #include<opencv2/core/core.hpp>
 
+#include "Map.h"
 #include "Tracking.h"
 #include "FrameDrawer.h"
 #include "MapDrawer.h"
@@ -168,7 +169,7 @@ public:
     void SaveTrajectoryKITTI(const string &filename);
 
     // TODO: Save/Load functions
-    // SaveMap(const string &filename);
+    bool SaveMap(const std::string &filename);
     // LoadMap(const string &filename);
 
     // Information from most recent processed frame
@@ -191,6 +192,10 @@ public:
     void InsertResizeTime(double& time);
     void InsertTrackTime(double& time);
 #endif
+
+protected:
+    Map* mpMap;
+    std::mutex mMutexMap;
 
 private:
 

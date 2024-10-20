@@ -563,6 +563,74 @@ void System::Shutdown()
 
 }
 
+bool System::SaveMap(const std::string &filename)
+{
+    // ファイルをバイナリモードで開く
+    std::ofstream ofs(filename, std::ios::binary);
+    if (!ofs.is_open())
+    {
+        std::cerr << "Cannot open file to save the map: " << filename << std::endl;
+        return false;
+    }
+
+    // マップへのアクセスを保護
+    std::unique_lock<std::mutex> lock(mMutexMap);
+
+    // マップポイントを取得
+    std::vector<MapPoint*> vpMapPoints = mpMap->GetAllMapPoints();
+    size_t numMapPoints = vpMapPoints.size();
+    ofs.write(reinterpret_cast<char*>(&numMapPoints), sizeof(size_t));
+    for(auto pMP : vpMapPoints)
+    {
+        if(pMP)
+        {
+            // マップポイントIDと位置を保存
+            int id = pMP->mnId;
+            Eigen::Vector3f pos_eigen = pMP->GetWorldPos();
+            cv::Mat pos = cv::Mat::zeros(3, 1, CV_32F);
+            pos.at<float>(0, 0) = pos_eigen[0];
+            pos.at<float>(1, 0) = pos_eigen[1];
+            pos.at<float>(2, 0) = pos_eigen[2];
+            ofs.write(reinterpret_cast<char*>(&id), sizeof(int));
+            ofs.write(reinterpret_cast<char*>(pos.ptr()), sizeof(float)*3);
+            // 必要に応じて追加情報も保存
+        }
+    }
+
+    // キーフレームを取得
+    std::vector<KeyFrame*> vpKeyFrames = mpMap->GetAllKeyFrames();
+    size_t numKeyFrames = vpKeyFrames.size();
+    ofs.write(reinterpret_cast<char*>(&numKeyFrames), sizeof(size_t));
+    for(auto pKF : vpKeyFrames)
+    {
+        if(pKF)
+        {
+            // キーフレームIDとポーズを保存
+            int id = pKF->mnId;
+            Sophus::SE3f pose_sophus = pKF->GetPose();
+            Eigen::Matrix4f pose_eigen = pose_sophus.matrix();
+
+            cv::Mat pose = cv::Mat::zeros(4, 4, CV_32F);
+            for(int row = 0; row < 4; ++row)
+            {
+              for(int col = 0; col < 4; ++col)
+              {
+                pose.at<float>(row, col) = pose_eigen(row, col);
+              }
+            }
+            ofs.write(reinterpret_cast<char*>(&id), sizeof(int));
+            ofs.write(reinterpret_cast<char*>(pose.ptr()), sizeof(float)*16); // 4x4行列
+            // 必要に応じて追加情報も保存
+        }
+    }
+
+    // 必要に応じて他のマップ関連データも保存
+
+    ofs.close();
+    std::cout << "Map saved to " << filename << std::endl;
+    return true;
+}
+
 bool System::isShutDown() {
     unique_lock<mutex> lock(mMutexReset);
     return mbShutDown;
