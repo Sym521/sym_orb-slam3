@@ -151,6 +151,13 @@ add_executable(Custom
 target_link_libraries(Custom ${PROJECT_NAME})
 
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/DualCam)
+add_executable(DualCam
+  DualCam/DualCam.cc
+)
+
+target_link_libraries(DualCam ${PROJECT_NAME})
+
 
 # RGB-D examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)

@@ -1,0 +1,109 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# System config
+#--------------------------------------------------------------------------------------------
+
+# When the variables are commented, the system doesn't load a previous session or not store the current one
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+File.version: "1.0"
+
+Camera.type: "PinHole"
+
+# Camera calibration and distortion parameters (OpenCV) 
+# Camera1
+Camera1.fx: 1255.9 #1467.836136
+Camera1.fy: 1262.28 #1471.712197
+Camera1.cx: 640.000000 #941.204100
+Camera1.cy: 360.000000 #495.586545
+
+Camera1.k1: 0.031240
+Camera1.k2: -0.079239
+Camera1.p1: 0.002502
+Camera1.p2: -0.002789
+Camera1.k3: 0.000000
+
+#Camera2
+Camera2.fx: 1255.9
+Camera2.fy: 1262.28 #1471.712197
+Camera2.cx: 640.000000 #941.204100
+Camera2.cy: 360.000000 #495.586545
+
+Camera2.k1: 0.031240
+Camera2.k2: -0.079239
+Camera2.p1: 0.002502
+Camera2.p2: -0.002789
+Camera2.k3: 0.000000
+
+Camera.width: 640
+Camera.height: 480
+
+# Camera frames per second 
+Camera.fps: 30
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Depth map values factor
+RGBD.DepthMapFactor: 5000.0
+
+#--------------------------------------------------------------------------------------------
+# Stereo Parameters
+#--------------------------------------------------------------------------------------------
+
+Stereo.ThDepth: 0.0
+
+# Stereo Camera Extrinsics (Translation and Rotation)
+# T_c1_c2: translation vector from camera1 to camera2
+Stereo.T_c1_c2: !!opencv-matrix
+  rows: 4
+  cols: 4
+  dt: f
+  data: [0.999997256477797,-0.002317135723275,-0.000343393120620,0.110074137800478,
+         0.002312067192432,0.999898048507103,-0.014090668452683,-0.000156612054392,
+         0.000376008102320,0.014089835846691,0.999900662638081,0.000889382785432,
+         0,0,0,1.000000000000000]
+
+# R_c1_c2: rotation matrix from camera1 to camera2
+#Stereo.R_c1_c2: [1.0, 0.0, 0.0,  # Row 1
+ #                0.0, 1.0, 0.0,  # Row 2
+  #               0.0, 0.0, 1.0]  # Row 3
+                 # Adjust if there is a rotation between cameras
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 1000 #1000
+
+# ORB Extractor: Scale factor between levels in the scale pyramid 	
+ORBextractor.scaleFactor: 1.2 #1.2
+
+# ORB Extractor: Number of levels in the scale pyramid	
+ORBextractor.nLevels: 10 #8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#---------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500.0
+
