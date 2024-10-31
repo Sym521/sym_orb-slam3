@@ -158,7 +158,6 @@ add_executable(DualCam
 
 target_link_libraries(DualCam ${PROJECT_NAME})
 
-
 # RGB-D examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 
