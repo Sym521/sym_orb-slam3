@@ -29,11 +29,11 @@ int main(int argc, char **argv)
     }
 
     // Set camera properties (if necessary) for both cameras
-    cap1.set(cv::CAP_PROP_FRAME_WIDTH, 854);
+    cap1.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap1.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     cap1.set(cv::CAP_PROP_FPS, 30);
 
-    cap2.set(cv::CAP_PROP_FRAME_WIDTH, 854);
+    cap2.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap2.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     cap2.set(cv::CAP_PROP_FPS, 30);
 
@@ -50,8 +50,13 @@ int main(int argc, char **argv)
             break;
         }
 
-        // Process stereo frames using the SLAM system
-        SLAM.TrackStereo(frame1, frame2, cap1.get(cv::CAP_PROP_POS_FRAMES));
+        auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() / 1000.0;
+        
+        try {
+            SLAM.TrackStereo(frame1, frame2, timestamp);
+        } catch (const std::exception &e) {
+            std::cerr << "Exception caught: " << e.what() << std::endl;
+        }
 
         // Display the frames from both cameras (optional)
         cv::imshow("Camera 1", frame1);
