@@ -5,15 +5,13 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/videoio/videoio.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp> // for GaussianBlur
 #include "System.h"
 
 int main(int argc, char **argv)
 {
-
-    // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::MONOCULAR, true);
 
-    // Open the default camera (usually the built-in camera)
     cv::VideoCapture cap("/dev/video5");
     if (!cap.isOpened())
     {
@@ -21,12 +19,11 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // Set camera properties (if necessary)
     cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     cap.set(cv::CAP_PROP_FPS, 30);
 
-    cv::Mat frame;
+    cv::Mat frame, processed_frame;
     while (true)
     {
         cap >> frame;
@@ -36,19 +33,21 @@ int main(int argc, char **argv)
             break;
         }
 
-        SLAM.TrackMonocular(frame, cap.get(cv::CAP_PROP_POS_FRAMES));
+        // Apply Gaussian Blur to reduce noise
+        cv::GaussianBlur(frame, processed_frame, cv::Size(3, 3), 1.5);
 
-        // Display the frame (optional)
-        cv::imshow("Camera", frame);
+        // Track with ORB-SLAM using the processed frame
+        SLAM.TrackMonocular(processed_frame, cap.get(cv::CAP_PROP_POS_FRAMES));
+
+        // Display the original frame with optional processing for visualization
+        cv::imshow("Camera", processed_frame);
         if (cv::waitKey(1) == 27) // Press 'ESC' to exit
         {
             break;
         }
     }
 
-    // Stop all threads
     SLAM.Shutdown();
-
     return 0;
 }
 
